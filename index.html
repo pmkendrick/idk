@@ -26,18 +26,13 @@
     }
     #overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-      font-size: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
       z-index: 10;
       cursor: pointer;
-      text-align: center;
-      padding: 1rem;
     }
   </style>
 </head>
@@ -47,7 +42,7 @@
       <source src="https://raw.githubusercontent.com/pmkendrick/-/9788f79131b991a5795859af688edf2b5294ebb0/Cat%20Jumps%20Through%20Glass%20Window.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <div id="overlay">Click or press any key to enable sound and fullscreen</div>
+    <div id="overlay"></div>
   </div>
 
   <script>
@@ -55,20 +50,17 @@
       const video = document.getElementById('video-player');
       const overlay = document.getElementById('overlay');
 
-      // Try to autoplay muted
+      // Autoplay muted
       video.play().catch(err => {
         console.warn("Autoplay failed:", err);
       });
 
       const enableSoundAndFullscreen = () => {
-        // Remove overlay
         overlay.style.display = 'none';
 
-        // Unmute and play
         video.muted = false;
         video.play();
 
-        // Fullscreen
         if (video.requestFullscreen) {
           video.requestFullscreen();
         } else if (video.webkitRequestFullscreen) {
@@ -77,7 +69,6 @@
           video.msRequestFullscreen();
         }
 
-        // Cleanup
         document.removeEventListener('click', enableSoundAndFullscreen);
         document.removeEventListener('keydown', enableSoundAndFullscreen);
       };
