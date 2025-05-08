@@ -1,80 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cat Jumps Through Glass Window</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background-color: black;
-        }
-        #video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        #video-player {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cat Jumps Through Glass Window</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: black;
+    }
+    #video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #video-player {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      cursor: pointer;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
 </head>
 <body>
-    <div id="video-container">
-        <video id="video-player" autoplay loop muted playsinline>
-            <source src="https://raw.githubusercontent.com/pmkendrick/-/9788f79131b991a5795859af688edf2b5294ebb0/Cat%20Jumps%20Through%20Glass%20Window.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+  <div id="video-container">
+    <video id="video-player" autoplay loop muted playsinline>
+      <source src="https://raw.githubusercontent.com/pmkendrick/-/9788f79131b991a5795859af688edf2b5294ebb0/Cat%20Jumps%20Through%20Glass%20Window.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div id="overlay">Click or press any key to enable sound and fullscreen</div>
+  </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('video-player');
-            
-            // Try to unmute immediately (may fail due to browser restrictions)
-            video.muted = false;
-            
-            // Attempt autoplay with sound (will fail in most browsers)
-            video.play().then(() => {
-                console.log("Video is playing with sound!");
-            }).catch(error => {
-                console.error("Autoplay with sound failed:", error);
-                // Fallback: Mute and play, then unmute on user interaction
-                video.muted = true;
-                video.play();
-                
-                // Unmute when user clicks or presses a key
-                const unmuteOnInteraction = () => {
-                    video.muted = false;
-                    document.removeEventListener('click', unmuteOnInteraction);
-                    document.removeEventListener('keydown', unmuteOnInteraction);
-                };
-                document.addEventListener('click', unmuteOnInteraction);
-                document.addEventListener('keydown', unmuteOnInteraction);
-            });
-            
-            // Try fullscreen on any interaction
-            const enterFullscreen = () => {
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.webkitRequestFullscreen) {
-                    video.webkitRequestFullscreen();
-                } else if (video.msRequestFullscreen) {
-                    video.msRequestFullscreen();
-                }
-                document.removeEventListener('click', enterFullscreen);
-                document.removeEventListener('keydown', enterFullscreen);
-            };
-            document.addEventListener('click', enterFullscreen);
-            document.addEventListener('keydown', enterFullscreen);
-        });
-    </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const video = document.getElementById('video-player');
+      const overlay = document.getElementById('overlay');
+
+      // Try to autoplay muted
+      video.play().catch(err => {
+        console.warn("Autoplay failed:", err);
+      });
+
+      const enableSoundAndFullscreen = () => {
+        // Remove overlay
+        overlay.style.display = 'none';
+
+        // Unmute and play
+        video.muted = false;
+        video.play();
+
+        // Fullscreen
+        if (video.requestFullscreen) {
+          video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+          video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) {
+          video.msRequestFullscreen();
+        }
+
+        // Cleanup
+        document.removeEventListener('click', enableSoundAndFullscreen);
+        document.removeEventListener('keydown', enableSoundAndFullscreen);
+      };
+
+      document.addEventListener('click', enableSoundAndFullscreen);
+      document.addEventListener('keydown', enableSoundAndFullscreen);
+    });
+  </script>
 </body>
 </html>
